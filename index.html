@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPFD Year-End Party 2026: Best Dressed Awards</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QRCode.js for instant event QR code generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Inter & Playfair Display Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-display {
+      font-family: 'Playfair Display', serif;
+    }
+    .spring-gradient-bg {
+      background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+    }
+    .spring-card-glow {
+      box-shadow: 0 20px 45px -15px rgba(5, 150, 105, 0.14), 0 4px 16px -4px rgba(15, 23, 42, 0.06);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50/40 to-amber-50/40 text-slate-800 antialiased selection:bg-emerald-200 selection:text-emerald-950">
+
+  <!-- Subtle Top Demo & Testing Utility Bar -->
+  <div class="bg-emerald-50/90 backdrop-blur-md border-b border-emerald-200/70 px-4 py-2 text-xs text-slate-600 sticky top-0 z-30">
+    <div class="max-w-3xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Roster: <strong id="top-roster-count" class="text-slate-900">224 Guests</strong> (<span id="top-voted-count" class="font-semibold text-emerald-700">0</span> voted • 250 max)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          onclick="resetDeviceVoteForTesting()"
+          class="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100/70 text-emerald-800 border border-emerald-200 font-medium transition shadow-2xs"
+          title="Clears only this browser's vote lock so you can test voting as another guest"
+        >
+          Test Another Guest
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-3xl mx-auto px-4 pt-6 pb-16 sm:pt-10">
+
+    <!-- Event Header -->
+    <header class="text-center mb-7">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-emerald-200/80 shadow-2xs text-xs font-semibold tracking-wider uppercase text-emerald-800 mb-3">
+        <span>🌿</span>
+        <span>PPFD Year-End Party 2026</span>
+        <span>✨</span>
+      </div>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+        Best Dressed Awards
+      </h1>
+      <p class="text-sm text-slate-600 mt-1.5 max-w-md mx-auto">
+        Cast your official ballot for tonight’s standout style icons across all PPFD units.
+      </p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex p-1.5 bg-white/90 backdrop-blur-md border border-emerald-100 rounded-2xl shadow-xs mb-7 max-w-md mx-auto" role="tablist">
+      <button
+        type="button"
+        id="tab-vote"
+        onclick="switchTab('vote')"
+        role="tab"
+        class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition bg-emerald-600 text-white shadow-xs"
+      >
+        Cast Ballot
+      </button>
+      <button
+        type="button"
+        id="tab-qr"
+        onclick="switchTab('qr')"
+        role="tab"
+        class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-emerald-50/70"
+      >
+        Event QR Code
+      </button>
+      <button
+        type="button"
+        id="tab-host"
+        onclick="switchTab('host')"
+        role="tab"
+        class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 hover:bg-emerald-50/70"
+      >
+        Host Dashboard
+      </button>
+    </nav>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 1: GUEST BALLOT                                                -->
+    <!-- =================================================================== -->
+    <section id="view-vote" class="space-y-6">
+
+      <!-- Voting Form Card -->
+      <div id="ballot-form-container" class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 sm:p-8 spring-card-glow">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Guest Ballot</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Search for your name below and cast your votes • No self-voting • One vote per guest</p>
+          </div>
+          <span id="ballot-roster-badge" class="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs font-mono font-semibold text-amber-700">
+            224 GUESTS
+          </span>
+        </div>
+
+        <!-- Judging Criteria Reference Box -->
+        <div class="mb-6 rounded-2xl bg-emerald-50/60 border border-emerald-200/70 overflow-hidden">
+          <div class="px-3.5 py-2 bg-emerald-100/60 border-b border-emerald-200/60 flex items-center gap-1.5">
+            <span class="text-xs">✨</span>
+            <h3 class="text-[11px] font-bold uppercase tracking-wider text-emerald-900">Judging Criteria</h3>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-emerald-200/50 text-xs text-slate-700">
+            <ul class="divide-y divide-emerald-200/50">
+              <li class="px-3.5 py-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="font-medium">Theme Relevance</span>
+              </li>
+              <li class="px-3.5 py-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="font-medium">Creativity &amp; Originality</span>
+              </li>
+            </ul>
+            <ul class="divide-y divide-emerald-200/50">
+              <li class="px-3.5 py-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="font-medium">Overall Look</span>
+              </li>
+              <li class="px-3.5 py-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="font-medium">Confidence &amp; Presentation</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <form id="voting-form" onsubmit="handleVoteSubmit(event)" class="space-y-5" novalidate>
+
+          <!-- Step 1: Voter Identity (All 224 Guests, Grouped by Unit) -->
+          <div class="space-y-2">
+            <label class="flex items-center justify-between text-sm font-semibold text-slate-800">
+              <span class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center text-xs font-bold">1</span>
+                <span>Your Name</span>
+              </span>
+              <span class="text-xs font-normal text-slate-500">Required • 1 vote per guest</span>
+            </label>
+
+            <div class="relative" id="combobox-voter" data-role="voter">
+              <button
+                type="button"
+                id="trigger-voter"
+                onclick="toggleCombobox('voter')"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                class="w-full bg-slate-50/70 hover:bg-white border border-emerald-200/90 focus:bg-white focus:border-emerald-500 focus:ring-3 focus:ring-emerald-500/15 rounded-xl px-3.5 py-3.5 text-left text-sm flex items-center justify-between gap-2 transition"
+              >
+                <span id="display-voter" class="truncate text-slate-400">Select your name from the guest list...</span>
+                <div class="flex items-center gap-1 shrink-0">
+                  <span id="clear-voter" onclick="clearComboboxSelection(event, 'voter')" class="hidden w-5 h-5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs" title="Clear selection">✕</span>
+                  <svg class="w-4 h-4 text-emerald-600 transition-transform duration-200" id="chevron-voter" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </button>
+
+              <!-- Dropdown Panel -->
+              <div id="panel-voter" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 overflow-hidden animate-fade-in">
+                <div class="p-2 border-b border-slate-100 bg-emerald-50/40">
+                  <div class="relative">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input
+                      type="text"
+                      id="search-voter"
+                      placeholder="Search by name, unit (e.g. PFP), or title..."
+                      oninput="renderComboboxOptions('voter')"
+                      onkeydown="handleComboboxKeydown(event, 'voter')"
+                      class="w-full bg-white border border-emerald-200 focus:border-emerald-500 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none"
+                    />
+                  </div>
+                </div>
+                <ul id="list-voter" role="listbox" class="max-h-96 sm:max-h-[28rem] overflow-y-auto divide-y divide-slate-50 text-sm"></ul>
+              </div>
+            </div>
+
+            <p id="voter-duplicate-warning" class="hidden text-xs text-rose-600 font-semibold flex items-center gap-1.5 mt-1">
+              <span>⚠</span> <span>This guest has already cast their ballot tonight.</span>
+            </p>
+          </div>
+
+          <!-- Step 2: Best Dressed Male (Gender M Only, Grouped by Unit) -->
+          <div class="space-y-2">
+            <label class="flex items-center justify-between text-sm font-semibold text-slate-800">
+              <span class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 border border-sky-200 flex items-center justify-center text-xs font-bold">♂</span>
+                <span>Best Dressed Male</span>
+              </span>
+              <span id="male-nominee-count-label" class="text-xs font-normal text-sky-700/80">95 Male Guests</span>
+            </label>
+
+            <div class="relative" id="combobox-male" data-role="male">
+              <button
+                type="button"
+                id="trigger-male"
+                onclick="toggleCombobox('male')"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                class="w-full bg-slate-50/70 hover:bg-white border border-sky-200/90 focus:bg-white focus:border-sky-500 focus:ring-3 focus:ring-sky-500/15 rounded-xl px-3.5 py-3.5 text-left text-sm flex items-center justify-between gap-2 transition"
+              >
+                <span id="display-male" class="truncate text-slate-400">Choose Best Dressed Male...</span>
+                <div class="flex items-center gap-1 shrink-0">
+                  <span id="clear-male" onclick="clearComboboxSelection(event, 'male')" class="hidden w-5 h-5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs" title="Clear selection">✕</span>
+                  <svg class="w-4 h-4 text-sky-600 transition-transform duration-200" id="chevron-male" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </button>
+
+              <!-- Dropdown Panel -->
+              <div id="panel-male" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-sky-200 rounded-2xl shadow-xl z-40 overflow-hidden animate-fade-in">
+                <div class="p-2 border-b border-slate-100 bg-sky-50/40">
+                  <div class="relative">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input
+                      type="text"
+                      id="search-male"
+                      placeholder="Search male nominee by name, unit, or title..."
+                      oninput="renderComboboxOptions('male')"
+                      onkeydown="handleComboboxKeydown(event, 'male')"
+                      class="w-full bg-white border border-sky-200 focus:border-sky-500 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none"
+                    />
+                  </div>
+                </div>
+                <ul id="list-male" role="listbox" class="max-h-96 sm:max-h-[28rem] overflow-y-auto divide-y divide-slate-50 text-sm"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Best Dressed Female (Gender F Only, Grouped by Unit) -->
+          <div class="space-y-2">
+            <label class="flex items-center justify-between text-sm font-semibold text-slate-800">
+              <span class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center text-xs font-bold">♀</span>
+                <span>Best Dressed Female</span>
+              </span>
+              <span id="female-nominee-count-label" class="text-xs font-normal text-rose-600/80">129 Female Guests</span>
+            </label>
+
+            <div class="relative" id="combobox-female" data-role="female">
+              <button
+                type="button"
+                id="trigger-female"
+                onclick="toggleCombobox('female')"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                class="w-full bg-slate-50/70 hover:bg-white border border-rose-200/90 focus:bg-white focus:border-rose-500 focus:ring-3 focus:ring-rose-500/15 rounded-xl px-3.5 py-3.5 text-left text-sm flex items-center justify-between gap-2 transition"
+              >
+                <span id="display-female" class="truncate text-slate-400">Choose Best Dressed Female...</span>
+                <div class="flex items-center gap-1 shrink-0">
+                  <span id="clear-female" onclick="clearComboboxSelection(event, 'female')" class="hidden w-5 h-5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs" title="Clear selection">✕</span>
+                  <svg class="w-4 h-4 text-rose-500 transition-transform duration-200" id="chevron-female" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </button>
+
+              <!-- Dropdown Panel -->
+              <div id="panel-female" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-rose-200 rounded-2xl shadow-xl z-40 overflow-hidden animate-fade-in">
+                <div class="p-2 border-b border-slate-100 bg-rose-50/40">
+                  <div class="relative">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input
+                      type="text"
+                      id="search-female"
+                      placeholder="Search female nominee by name, unit, or title..."
+                      oninput="renderComboboxOptions('female')"
+                      onkeydown="handleComboboxKeydown(event, 'female')"
+                      class="w-full bg-white border border-rose-200 focus:border-rose-500 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none"
+                    />
+                  </div>
+                </div>
+                <ul id="list-female" role="listbox" class="max-h-96 sm:max-h-[28rem] overflow-y-auto divide-y divide-slate-50 text-sm"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Validation Banner -->
+          <div id="form-validation-banner" class="hidden p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium flex items-start gap-2">
+            <span class="text-base leading-none">🚫</span>
+            <span id="form-validation-text">Please complete all selections before submitting.</span>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            id="submit-ballot-btn"
+            class="w-full py-4 px-6 rounded-2xl spring-gradient-bg hover:opacity-95 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2"
+          >
+            <span>Submit Official Ballot</span>
+            <span>✨</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Ballot Confirmation Receipt Card (Shown after voting) -->
+      <div id="ballot-confirmed-container" class="hidden bg-white/95 backdrop-blur-md border border-emerald-200 rounded-3xl p-6 sm:p-8 spring-card-glow animate-fade-in">
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl mx-auto mb-3 shadow-xs">
+            ✓
+          </div>
+          <h2 class="font-display text-2xl font-bold text-slate-900">Ballot Recorded!</h2>
+          <p class="text-xs text-slate-500 mt-1" id="receipt-time">Recorded just now</p>
+        </div>
+
+        <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-emerald-100 pb-3">
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Registered Guest</span>
+              <span id="receipt-voter" class="text-sm font-bold text-slate-900">—</span>
+              <span id="receipt-voter-meta" class="text-[11px] text-emerald-700 font-medium block mt-0.5">—</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Receipt ID</span>
+              <span id="receipt-id" class="text-xs font-mono font-semibold text-emerald-700">#PPFD-000</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div class="bg-white p-3 rounded-xl border border-sky-100 shadow-2xs">
+              <span class="text-[11px] text-sky-600 font-semibold block">♂ Best Dressed Male</span>
+              <span id="receipt-male" class="text-sm font-bold text-slate-900 mt-0.5 block truncate">—</span>
+              <span id="receipt-male-unit" class="text-[10px] font-mono text-sky-700/80 block mt-0.5">—</span>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs">
+              <span class="text-[11px] text-rose-600 font-semibold block">♀ Best Dressed Female</span>
+              <span id="receipt-female" class="text-sm font-bold text-slate-900 mt-0.5 block truncate">—</span>
+              <span id="receipt-female-unit" class="text-[10px] font-mono text-rose-600/80 block mt-0.5">—</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-center text-xs text-slate-500 mt-5">
+          Winners will be announced live during tonight's awards ceremony. Enjoy the party!
+        </p>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 2: EVENT QR CODE                                               -->
+    <!-- =================================================================== -->
+    <section id="view-qr" class="hidden">
+      <div class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 sm:p-8 spring-card-glow text-center space-y-6">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+            Scan to Vote on Mobile
+          </span>
+          <h2 class="font-display text-2xl font-bold text-slate-900 mt-3">Table Tent &amp; Screen QR</h2>
+          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            Display this QR code at the venue entrance or on table tents so guests can scan and cast their ballots.
+          </p>
+        </div>
+
+        <div class="inline-flex p-5 bg-white rounded-3xl border-2 border-emerald-100 shadow-md mx-auto">
+          <div id="qrcode-canvas"></div>
+        </div>
+
+        <!-- Sandbox / Localhost Warning Banner (Shown automatically when URL isn't a public web address) -->
+        <div id="qr-sandbox-warning" class="hidden max-w-md mx-auto p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-left text-xs text-amber-900 space-y-1">
+          <p class="font-bold flex items-center gap-1.5"><span>⚠️</span> <span>Preview / Sandbox URL Detected</span></p>
+          <p class="text-amber-800 leading-relaxed">
+            Right now this page is running in a private preview environment, so scanning its internal link on a phone opens a blank page. Once you host this HTML file online (e.g., GitHub Pages, Netlify, or Vercel), paste your live link below to generate a scannable QR code!
+          </p>
+        </div>
+
+        <!-- Editable Share URL & Actions -->
+        <div class="max-w-md mx-auto space-y-2.5">
+          <label for="event-share-url-input" class="block text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 px-1">
+            Target Voting URL (Editable)
+          </label>
+          <div class="bg-slate-50 border border-slate-200 focus-within:border-emerald-500 focus-within:bg-white rounded-2xl p-2 flex items-center gap-2 transition">
+            <input
+              type="url"
+              id="event-share-url-input"
+              oninput="updateQRCodeFromInput()"
+              placeholder="https://your-party-site.netlify.app"
+              class="flex-1 bg-transparent text-xs font-mono text-slate-700 px-2 py-1.5 outline-none min-w-0"
+            />
+            <button
+              type="button"
+              onclick="copyEventLink()"
+              class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shrink-0 transition"
+            >
+              Copy Link
+            </button>
+          </div>
+
+          <div class="flex items-center justify-center gap-2 pt-1">
+            <button
+              type="button"
+              onclick="downloadQRCodePNG()"
+              class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center gap-1.5"
+            >
+              <span>⬇️</span>
+              <span>Download QR as PNG</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 3: HOST DASHBOARD                                              -->
+    <!-- =================================================================== -->
+    <section id="view-host" class="hidden space-y-6">
+
+      <!-- PIN Gate -->
+      <div id="host-pin-gate" class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 sm:p-8 spring-card-glow max-w-md mx-auto text-center space-y-5">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center text-xl mx-auto">
+          🔒
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Host &amp; Organizer Access</h2>
+          <p class="text-xs text-slate-500 mt-1">Enter the event PIN to view live leaderboards, manage guests, or export CSV results. <span class="text-emerald-700 font-semibold">(Demo PIN: 1234)</span></p>
+        </div>
+        <form onsubmit="handlePinSubmit(event)" class="space-y-3">
+          <input
+            type="password"
+            id="host-pin-input"
+            maxlength="8"
+            placeholder="Enter 4-digit PIN..."
+            class="w-full text-center tracking-widest font-mono text-lg bg-slate-50 border border-slate-200 focus:bg-white focus:border-emerald-500 rounded-xl px-4 py-3 outline-none"
+            required
+          />
+          <p id="pin-error" class="hidden text-xs text-rose-600 font-semibold">Invalid PIN. Please try 1234.</p>
+          <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition">
+            Unlock Dashboard
+          </button>
+        </form>
+      </div>
+
+      <!-- Unlocked Host Dashboard -->
+      <div id="host-dashboard-content" class="hidden space-y-6">
+
+        <!-- Turnout & Quick Controls -->
+        <div class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Live Election Command Center</h2>
+              <p class="text-xs text-slate-500">Real-time vote tallies grouped across PPFD units</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="seedSampleVotes()" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold transition">
+                + Seed 10 Sample Votes
+              </button>
+              <button type="button" onclick="exportCSV()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition">
+                Export CSV
+              </button>
+              <button type="button" onclick="lockHostDashboard()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+                Lock
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-5">
+            <div class="flex items-end justify-between mb-2">
+              <div>
+                <span id="host-total-votes" class="text-3xl font-bold text-slate-900">0</span>
+                <span class="text-sm text-slate-500"> / <span id="host-roster-total">224</span> Registered Guests Voted <span class="text-xs text-slate-400">(250 max cap)</span></span>
+              </div>
+              <span id="host-turnout-pct" class="text-sm font-bold text-emerald-600">0% Turnout</span>
+            </div>
+            <div class="w-full h-3.5 bg-emerald-50 rounded-full overflow-hidden border border-emerald-100 p-0.5">
+              <div id="host-progress-bar" class="h-full spring-gradient-bg rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Male Leaderboard -->
+          <div class="bg-white/95 backdrop-blur-md border border-sky-100 rounded-3xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-xs">♂</span>
+                <span>Best Dressed Male</span>
+              </h3>
+              <span id="male-unique-count" class="text-xs font-semibold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full">0 nominees</span>
+            </div>
+            <div id="male-leaderboard-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+          </div>
+
+          <!-- Female Leaderboard -->
+          <div class="bg-white/95 backdrop-blur-md border border-rose-100 rounded-3xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs">♀</span>
+                <span>Best Dressed Female</span>
+              </h3>
+              <span id="female-unique-count" class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full">0 nominees</span>
+            </div>
+            <div id="female-leaderboard-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <!-- Guest Roster Manager (Pre-loaded from party list test_2.xlsx) -->
+        <div class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-sm text-slate-900">Guest Directory Manager</h3>
+                <span id="roster-manager-badge" class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-mono font-semibold">224 Guests</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Pre-loaded from <code>party list test_2.xlsx</code> with Unit &amp; Gender metadata. Add walk-ins or filter by Unit/Gender.</p>
+            </div>
+            <button type="button" onclick="resetGuestRosterToDefault()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold transition shrink-0">
+              Restore Default 224 Roster
+            </button>
+          </div>
+
+          <!-- Add Walk-in Guest Form -->
+          <form onsubmit="handleAddWalkInGuest(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-emerald-50/40 p-3 rounded-2xl border border-emerald-100">
+            <input
+              type="text"
+              id="new-guest-name"
+              placeholder="Walk-in Full Name..."
+              class="sm:col-span-4 bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none"
+              required
+            />
+            <input
+              type="text"
+              id="new-guest-title"
+              placeholder="Position Title (optional)..."
+              class="sm:col-span-3 bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none"
+            />
+            <select
+              id="new-guest-unit"
+              class="sm:col-span-2 bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-2.5 py-2 text-xs text-slate-900 outline-none"
+            >
+              <option value="PFP">PFP</option>
+              <option value="PFFM">PFFM</option>
+              <option value="PFPM">PFPM</option>
+              <option value="PFOD">PFOD</option>
+              <option value="CSPC">CSPC</option>
+              <option value="GUEST">GUEST</option>
+            </select>
+            <select
+              id="new-guest-gender"
+              class="sm:col-span-1 bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-2 py-2 text-xs text-slate-900 outline-none"
+            >
+              <option value="F">F</option>
+              <option value="M">M</option>
+            </select>
+            <button type="submit" class="sm:col-span-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition">
+              + Add
+            </button>
+          </form>
+
+          <!-- Filter Bar & Scrollable Roster Pills -->
+          <div class="space-y-2">
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                id="host-roster-search"
+                oninput="renderHostRosterManager()"
+                placeholder="Filter directory by name, title, or unit..."
+                class="flex-1 bg-emerald-50/40 border border-emerald-100 focus:bg-white focus:border-emerald-400 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none"
+              />
+              <select id="host-roster-unit-filter" onchange="renderHostRosterManager()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none">
+                <option value="ALL">All Units</option>
+                <option value="PFP">PFP</option>
+                <option value="PFFM">PFFM</option>
+                <option value="PFPM">PFPM</option>
+                <option value="PFOD">PFOD</option>
+                <option value="CSPC">CSPC</option>
+              </select>
+              <select id="host-roster-gender-filter" onchange="renderHostRosterManager()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none">
+                <option value="ALL">All Genders</option>
+                <option value="M">Male (M)</option>
+                <option value="F">Female (F)</option>
+              </select>
+            </div>
+            <div id="host-roster-list" class="max-h-56 overflow-y-auto flex flex-wrap gap-1.5 p-2.5 rounded-2xl bg-slate-50/80 border border-slate-100">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Log & Danger Zone -->
+        <div class="bg-white/95 backdrop-blur-md border border-emerald-100 rounded-3xl p-6 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-sm text-slate-900">Ballot Audit Log</h3>
+              <p class="text-xs text-slate-500">Chronological record of verified guest submissions</p>
+            </div>
+            <button
+              type="button"
+              id="btn-clear-votes"
+              onclick="confirmClearAllVotes()"
+              class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
+            >
+              Reset All Ballots
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-100">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                <tr>
+                  <th class="py-2.5 px-3 font-semibold">Receipt</th>
+                  <th class="py-2.5 px-3 font-semibold">Voter</th>
+                  <th class="py-2.5 px-3 font-semibold">Best Dressed Male</th>
+                  <th class="py-2.5 px-3 font-semibold">Best Dressed Female</th>
+                  <th class="py-2.5 px-3 font-semibold text-right">Time</th>
+                </tr>
+              </thead>
+              <tbody id="audit-log-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * PPFD YEAR-END PARTY 2026: BEST DRESSED VOTING SYSTEM (224-GUEST EDITION)
+     * Complete 224-guest directory from 'party list test_2.xlsx' with Gender
+     * filtering (M -> Male, F -> Female, All -> Your Name) and sticky Unit
+     * grouping (CSPC, PFFM, PFOD, PFP, PFPM) sorted alphabetically.
+     * =========================================================================
+     */
+
+    const MAX_CAPACITY = 250;
+    const HOST_PIN = "1234";
+    const STORAGE_KEYS = {
+      BALLOTS: "ppfd_2026_v2_votes",
+      DEVICE_RECEIPT: "ppfd_2026_v2_device_receipt",
+      ROSTER: "ppfd_2026_v2_roster",
+      HOST_UNLOCKED: "ppfd_2026_v2_host_unlocked"
+    };
+
+    const INITIAL_GUEST_ROSTER = [
+      {"name": "Laarni T. Joson", "title": "Associate Procurement and Contracts Officer", "unit": "CSPC", "gender": "F"},
+      {"name": "Aaron Pasquinel D. Cruz", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Akmal Nartayev", "title": "Principal Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Anne Michelle C. Mendoza", "title": "Senior Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Anshuman Bardhan", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Asenath M. Ogucha Berglund", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Ben Veramu", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Bernard Kera", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Cecilia C. Peralta", "title": "Senior Financial Management Assistant", "unit": "PFFM", "gender": "F"},
+      {"name": "Charlette R. Gingosa", "title": "Senior Financial Management Assistant", "unit": "PFFM", "gender": "F"},
+      {"name": "Christian James G. Tolentino", "title": "Senior Financial Management Assistant", "unit": "PFFM", "gender": "M"},
+      {"name": "Dannielle Marie A. Treyes", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Deewas Khadka", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Delaney P. Miram", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Djamshid Iriskulov", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Dulguun Byambatsoo", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Elbek Yusupov", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Ezzatullah Oriakhail", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Fang Wang", "title": "Lead Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Grace Jan I. Flores", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Helen Grace O. Conol", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Indunil Kumari Ranatunge", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Irene Julitta Ponniah", "title": "Principal Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Jannine Mei A. Cerilo", "title": "Financial Management Analyst", "unit": "PFFM", "gender": "F"},
+      {"name": "Jayvee S. Montecer", "title": "Financial Management Analyst", "unit": "PFFM", "gender": "M"},
+      {"name": "Jericho N. Perez", "title": "Senior Financial Management Assistant", "unit": "PFFM", "gender": "M"},
+      {"name": "Jonnel S. Acoba", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Jubie Leah Mae S. Coles", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Kashif Jamal", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Katrina M. Fano", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Khurshid I. Narmatov", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Kitty Finau", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Krishnendu B. Sarkar", "title": "Principal Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Lili Zou", "title": "Principal Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Lilly Klara S. Garcia", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Livya Angelina", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Lynn Christine C. Olano", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Maria Joao Kaizeler", "title": "Director", "unit": "PFFM", "gender": "F"},
+      {"name": "Mark Allister U. Robis", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Marlis Ryspek Uulu", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Mary Margareth M. Bernus", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Md. Monjurul Ahmed", "title": "Principal Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Mikael Andersson", "title": "Senior Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Mohammod Rashedul Alam Chowdhury", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Mu Feng", "title": "Financial Management Analyst", "unit": "PFFM", "gender": "F"},
+      {"name": "Musaddiq I. Shaikh", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Myra Evelyn P. Ravelo", "title": "Senior Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Nan Zhang", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Nana Gvaladze", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Parv Dhuria", "title": "Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Pranita Sharma", "title": "Senior Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Raffy D. Amos", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Raushania Sibagatulina", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Ruth Farrant", "title": "Director", "unit": "PFFM", "gender": "F"},
+      {"name": "Sajid Raza Zaffar Khan", "title": "Principal Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Sakada Sem", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Shohin Karimzhonzoda", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Sohail Iqbal", "title": "Senior Financial Management Officer", "unit": "PFFM", "gender": "M"},
+      {"name": "Tahmeen Ahmad", "title": "Principal Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Thanh T. Tieu", "title": "Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Trang Thi Quynh Le", "title": "Financial Management Specialist", "unit": "PFFM", "gender": "F"},
+      {"name": "Vathsana Mounthady", "title": "Associate Financial Management Officer", "unit": "PFFM", "gender": "F"},
+      {"name": "Wenye Diao", "title": "Senior Financial Management Specialist", "unit": "PFFM", "gender": "M"},
+      {"name": "Wilhelm P. Dizon", "title": "Financial Management Assistant", "unit": "PFFM", "gender": "M"},
+      {"name": "Amiko Sudo", "title": "Principal Operations Coordination Specialist", "unit": "PFOD", "gender": "F"},
+      {"name": "Anthony Jay B. Castelo", "title": "Senior Operations Officer", "unit": "PFOD", "gender": "M"},
+      {"name": "Eiko Wataya", "title": "Project Management Specialist (Capacity Development)", "unit": "PFOD", "gender": "F"},
+      {"name": "Fatima Christine N. De Ramos-Blanco", "title": "Senior Operations Officer", "unit": "PFOD", "gender": "F"},
+      {"name": "Iris Ann T. Miranda", "title": "Operations Analyst", "unit": "PFOD", "gender": "F"},
+      {"name": "Ivylaine R. Europa", "title": "Associate Operations Officer", "unit": "PFOD", "gender": "F"},
+      {"name": "Juliet F. Vanta", "title": "Associate Operations Officer", "unit": "PFOD", "gender": "F"},
+      {"name": "Ma. Samantha M. Valdez", "title": "Associate Operations Officer", "unit": "PFOD", "gender": "F"},
+      {"name": "Mary Anne Cristal D. Villaflor", "title": "Operations Analyst", "unit": "PFOD", "gender": "F"},
+      {"name": "Abira Prashanth", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Ahmad Khalid Shams", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Ailene H. Susara", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Aiza Jane G. Vila", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Alexis McGinness", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Alfie A. Zafra-Dulay", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Aliya M. Baioralova", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Andy L. Bustamante", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Anita Kumari", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Aoxue Ren", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Armenuhi Burnazyan", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Ayana W. Angulo", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Battsengel Jamsranjav", "title": "Principal Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Bayarmaa Tsetsgee", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Ben Arvin F. dela Cruz", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Bisma Husen", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Bonnie Andrew M. Mendoza", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Chinara Israilova", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Chitoshi Izumi", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Claudia J. Molina", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Colyn C. Urban", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Dharmesh Dawda", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Divinia D. Aguda", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Doniyor Mukhammadaliyev", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Donnie Ray Koonce L. Ferrer", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "M"},
+      {"name": "Eduard Chil-Akopyan", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Ellen Joy Fajardo", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Enthrem B. Bagtas", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Eungkeol Kim", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Fae-Angelie G. Datu", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Florence Fata", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Galiya Ismakova", "title": "Director", "unit": "PFP", "gender": "F"},
+      {"name": "Geovana G. Maceda-Papa", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Glenda C. Balatbat", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Henry Joseph V. Sarmiento", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Irene B. Palad", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Ivan D. Canlas", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Jamshid M. Umarov", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Jan Marvin Paul O. Sacay", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Janet R. Mutyangpili", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Jaycle R. Ilagan", "title": "Procurement Analyst", "unit": "PFP", "gender": "M"},
+      {"name": "Jeremy J. Chuaquico", "title": "Procurement Assistant", "unit": "PFP", "gender": "M"},
+      {"name": "Jesper Pedersen", "title": "Director", "unit": "PFP", "gender": "M"},
+      {"name": "Jocelyn D. Alipio", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Jonathan Fong", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Joong-Jae Shim", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Jose Maria B. Ruiz", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Joy Marie Obra", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Julian Alexander Doczi", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Karen Michelle G. Valdecantos", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Karittha Jenchiewchan", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Karyll Anne V. Angeles", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Keiko Koiso", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Kevin Moore", "title": "Director", "unit": "PFP", "gender": "M"},
+      {"name": "Khounkham Thammalangsy", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Kirsteen Anne Mack", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Kristel Mae O. Pagulayan", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Kristine M. Pena", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Leah Vi G. Empensando", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Leonardo A. Baca Storni", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Lila Mallory", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Lorence Claire Ostil-Castillo", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Lorie Ann A. Dusaran", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Luka Mosashvili", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Luong Thi Thanh Ngan", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Ma. Cecilia C. Janeo", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Mara Camille Dayao", "title": "Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Maria Cristina M. Avila", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Maria Guadalupe F. David", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Maria Raphaela E. Pilar", "title": "Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Maria Sulaila Song S. Medina-Babijes", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Marie Elaine C. Canlas", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Mark Andrew V. Nimeno", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "M"},
+      {"name": "Mart Khaltarpurev", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Martin Ayson", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Marvin M. Hernandez", "title": "Procurement Analyst", "unit": "PFP", "gender": "M"},
+      {"name": "Mary Hazel M. Sanchez", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Masayuki Omote", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "May M. Oblefias", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Md. Rasel Parvez", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Mehmet Aykin", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Mehmet Sina Velioglu", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Mel Altoveros", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Melody L. Andres", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Mica Mariedi Martins Freitas", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Michelle C. Sevilla-Ylo", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Michelle L. Bueno", "title": "Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Mohammed Zulyaminayn", "title": "Principal Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Mohsen I. Khan", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Murman Katsitadze", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Nana Givievna Kvanchiany", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Nicole Laura N. Magana", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Nino Gergedava", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Nixen Julius N. Gella", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Noe F. Aquitana", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Olivier J. Leonard", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Philipp Evangelos Kalpaxis", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Portia A. Azores", "title": "Procurement Analyst", "unit": "PFP", "gender": "F"},
+      {"name": "Prasath Sanjeewa", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Qin Xiaoyan", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Roderick A. Artuz", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Romualdo A. Gulinao Jr.", "title": "Procurement Analyst", "unit": "PFP", "gender": "M"},
+      {"name": "Ronald L. Codilla", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Rose-Ann E. Carreon", "title": "Senior Procurement Assistant", "unit": "PFP", "gender": "F"},
+      {"name": "Ruby U. Alvarez", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Sandra Lyn A. Biscocho", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Sarah Jean Colacci", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Sharlene Jo-Ann Shillingford-Mcklmon", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Sheila M. Dela Cruz", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Sheryl V. Yanez", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Shyam Sunder Mehndiratta", "title": "Principal Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Sok Sokunthea", "title": "Principal Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Sopheark Mith Chea", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Stephane Bessadi", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Steven Gillard", "title": "Principal Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Suharyani", "title": "Principal Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Tal'at Nasirov", "title": "Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Tho Xuan Tran", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Thomas Robinson", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "M"},
+      {"name": "Tran Hiet Thi Hong", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Vanessa O. Chua", "title": "Associate Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Yan Yee Chu", "title": "Senior Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Yangzom", "title": "Procurement Specialist", "unit": "PFP", "gender": "F"},
+      {"name": "Yersultan Baktybayev", "title": "Procurement Officer", "unit": "PFP", "gender": "M"},
+      {"name": "Yinghua Zhou", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Yu Ying", "title": "Senior Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Yutirsa Yunus", "title": "Procurement Officer", "unit": "PFP", "gender": "F"},
+      {"name": "Amy Grace Y. Ramos", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Cerissa Camelle C. Obillos", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Charina M. Regodon", "title": "Senior Portfolio Management Assistant", "unit": "PFPM", "gender": "F"},
+      {"name": "Daniel Anne N. Rodriguez", "title": "Portfolio Management Analyst", "unit": "PFPM", "gender": "F"},
+      {"name": "Guoliang Wu", "title": "Director", "unit": "PFPM", "gender": "M"},
+      {"name": "Hanna Karla M. Gregorio", "title": "Portfolio Management Officer (Systems Support)", "unit": "PFPM", "gender": "F"},
+      {"name": "Ian Rei Paulo M. Bautista", "title": "Portfolio Management Assistant", "unit": "PFPM", "gender": "M"},
+      {"name": "Irma Mae A. Salvador", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Jasper E. Florendo", "title": "Associate Procurement Officer", "unit": "PFPM", "gender": "M"},
+      {"name": "Jennifer M. Baento", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "John Patrick F. Solano", "title": "Portfolio Management Assistant", "unit": "PFPM", "gender": "M"},
+      {"name": "Juver Paul R. Dolojan", "title": "Portfolio Management Officer", "unit": "PFPM", "gender": "M"},
+      {"name": "Luz N. Vargas", "title": "Senior Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Ma. Charina M. Lantican", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Marissa L. Barcenas", "title": "Lead Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Marvin L. de Asis", "title": "Senior Portfolio Management Officer", "unit": "PFPM", "gender": "M"},
+      {"name": "Pamela V. Barrameda", "title": "Senior Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Paulita T. Comia", "title": "Senior Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Ralie Dusseldorf L. Flores", "title": "Senior Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Regina Angela G. Ladaban", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "F"},
+      {"name": "Rhett Raymond C. Barrios", "title": "Associate Portfolio Management Officer", "unit": "PFPM", "gender": "M"},
+      {"name": "Sevil Maharramova", "title": "Principal Portfolio Management Specialist", "unit": "PFPM", "gender": "F"},
+      {"name": "Xu Zhao", "title": "Senior Digital Systems and Portfolio Analytics Specialist", "unit": "PFPM", "gender": "M"},
+      {"name": "Zafer Ozkan", "title": "Senior Portfolio Management Specialist", "unit": "PFPM", "gender": "M"}
+    ];
+
+    const selectedValues = { voter: "", male: "", female: "" };
+    const highlightedIndex = { voter: 0, male: 0, female: 0 };
+    let openComboboxRole = null;
+    let clearConfirmTimeout = null;
+    let isClearArmed = false;
+
+    // -------------------------------------------------------------------------
+    // Data Helpers & Storage Layer
+    // -------------------------------------------------------------------------
+
+    function normalizeName(str) {
+      return (str || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function escapeHTML(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getBallots() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.BALLOTS);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveBallots(ballots) {
+      localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify(ballots));
+      updateHeaderCounters();
+    }
+
+    function getGuestRoster() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.ROSTER);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return [...INITIAL_GUEST_ROSTER];
+    }
+
+    function saveGuestRoster(roster) {
+      localStorage.setItem(STORAGE_KEYS.ROSTER, JSON.stringify(roster));
+      updateHeaderCounters();
+    }
+
+    function findGuestByName(name) {
+      const norm = normalizeName(name);
+      if (!norm) return null;
+      return getGuestRoster().find(g => normalizeName(g.name) === norm) || null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Searchable Unit-Grouped & Gender-Filtered Comboboxes
+    // -------------------------------------------------------------------------
+
+    function getFilteredGuestsForRole(role, queryText = "") {
+      const roster = getGuestRoster();
+      const q = normalizeName(queryText);
+
+      const filtered = roster.filter(g => {
+        if (role === "male" && g.gender !== "M") return false;
+        if (role === "female" && g.gender !== "F") return false;
+        if (!q) return true;
+        return (
+          normalizeName(g.name).includes(q) ||
+          normalizeName(g.unit).includes(q) ||
+          normalizeName(g.title).includes(q)
+        );
+      });
+
+      // Sort by Unit alphabetically, then by Name alphabetically
+      return filtered.sort((a, b) => {
+        const unitCmp = a.unit.localeCompare(b.unit);
+        if (unitCmp !== 0) return unitCmp;
+        return a.name.localeCompare(b.name);
+      });
+    }
+
+    function toggleCombobox(role) {
+      const panel = document.getElementById(`panel-${role}`);
+      const trigger = document.getElementById(`trigger-${role}`);
+      const chevron = document.getElementById(`chevron-${role}`);
+      if (!panel) return;
+
+      const isCurrentlyOpen = openComboboxRole === role;
+      closeAllComboboxes();
+
+      if (!isCurrentlyOpen) {
+        openComboboxRole = role;
+        highlightedIndex[role] = 0;
+        panel.classList.remove("hidden");
+        if (trigger) trigger.setAttribute("aria-expanded", "true");
+        if (chevron) chevron.classList.add("rotate-180");
+
+        const searchInput = document.getElementById(`search-${role}`);
+        if (searchInput) {
+          searchInput.value = "";
+          renderComboboxOptions(role);
+          setTimeout(() => searchInput.focus(), 20);
+        }
+      }
+    }
+
+    function closeAllComboboxes() {
+      ["voter", "male", "female"].forEach(role => {
+        const panel = document.getElementById(`panel-${role}`);
+        const trigger = document.getElementById(`trigger-${role}`);
+        const chevron = document.getElementById(`chevron-${role}`);
+        if (panel) panel.classList.add("hidden");
+        if (trigger) trigger.setAttribute("aria-expanded", "false");
+        if (chevron) chevron.classList.remove("rotate-180");
+      });
+      openComboboxRole = null;
+    }
+
+    function renderComboboxOptions(role) {
+      const listEl = document.getElementById(`list-${role}`);
+      const searchInput = document.getElementById(`search-${role}`);
+      if (!listEl) return;
+
+      const query = searchInput ? searchInput.value : "";
+      const guests = getFilteredGuestsForRole(role, query);
+      const ballots = getBallots();
+      const votedNorms = new Set(ballots.map(b => normalizeName(b.voterName)));
+      const currentVoterNorm = normalizeName(selectedValues.voter);
+
+      if (guests.length === 0) {
+        listEl.innerHTML = `<li class="px-4 py-6 text-center text-xs text-slate-400">No matching guests found.</li>`;
+        return;
+      }
+
+      if (highlightedIndex[role] >= guests.length) {
+        highlightedIndex[role] = 0;
+      }
+
+      let html = "";
+      let lastUnit = null;
+
+      guests.forEach((guest, idx) => {
+        // Sticky Unit Header
+        if (guest.unit !== lastUnit) {
+          lastUnit = guest.unit;
+          html += `
+            <li class="sticky top-0 z-10 bg-slate-100/95 backdrop-blur-xs px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 border-y border-slate-200/70 flex items-center justify-between">
+              <span>UNIT: ${escapeHTML(guest.unit)}</span>
+              <span class="text-[9px] font-normal text-slate-400">Alphabetical</span>
+            </li>
+          `;
+        }
+
+        const normGuest = normalizeName(guest.name);
+        const isSelected = normalizeName(selectedValues[role]) === normGuest;
+        const isHighlighted = idx === highlightedIndex[role];
+        const hasAlreadyVoted = role === "voter" && votedNorms.has(normGuest);
+        const isSelfVote = (role === "male" || role === "female") && currentVoterNorm && normGuest === currentVoterNorm;
+        const isDisabled = isSelfVote;
+
+        let badgeHtml = "";
+        if (hasAlreadyVoted) {
+          badgeHtml = `<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-semibold shrink-0">Voted</span>`;
+        } else if (isSelfVote) {
+          badgeHtml = `<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-semibold shrink-0">You (Disabled)</span>`;
+        } else if (isSelected) {
+          badgeHtml = `<span class="text-emerald-600 font-bold text-xs shrink-0">✓</span>`;
+        }
+
+        const genderPill = guest.gender === "M"
+          ? `<span class="text-[10px] font-bold text-sky-700 bg-sky-50 border border-sky-200/70 px-1.5 rounded">M</span>`
+          : `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200/70 px-1.5 rounded">F</span>`;
+
+        html += `
+          <li
+            role="option"
+            data-opt-idx="${idx}"
+            aria-selected="${isSelected}"
+            onclick="${isDisabled ? '' : `selectComboboxOption('${role}', '${escapeHTML(guest.name)}')`}"
+            class="px-3.5 py-2.5 flex items-center justify-between gap-2 transition ${
+              isDisabled
+                ? "opacity-45 cursor-not-allowed bg-slate-50"
+                : isHighlighted
+                  ? "bg-emerald-50 cursor-pointer"
+                  : "hover:bg-slate-50 cursor-pointer"
+            }"
+          >
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="font-semibold text-xs sm:text-sm text-slate-900 truncate">${escapeHTML(guest.name)}</span>
+                ${role === "voter" ? genderPill : ""}
+              </div>
+              <p class="text-[11px] text-slate-400 truncate">${escapeHTML(guest.title)}</p>
+            </div>
+            ${badgeHtml}
+          </li>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
+    function selectComboboxOption(role, guestName) {
+      const guestObj = findGuestByName(guestName);
+      selectedValues[role] = guestName;
+
+      const displayEl = document.getElementById(`display-${role}`);
+      const clearEl = document.getElementById(`clear-${role}`);
+
+      if (displayEl) {
+        displayEl.textContent = guestObj ? `${guestObj.name} (${guestObj.unit})` : guestName;
+        displayEl.classList.remove("text-slate-400");
+        displayEl.classList.add("text-slate-900", "font-semibold");
+      }
+      if (clearEl) clearEl.classList.remove("hidden");
+
+      // Prevent self-voting if user selects themselves as voter after picking a nominee
+      if (role === "voter") {
+        const normVoter = normalizeName(guestName);
+        if (normalizeName(selectedValues.male) === normVoter) {
+          clearComboboxSelection(null, "male");
+        }
+        if (normalizeName(selectedValues.female) === normVoter) {
+          clearComboboxSelection(null, "female");
+        }
+      }
+
+      closeAllComboboxes();
+      validateBallotSelections();
+    }
+
+    function clearComboboxSelection(event, role) {
+      if (event) event.stopPropagation();
+      selectedValues[role] = "";
+
+      const placeholders = {
+        voter: "Select your name from the guest list...",
+        male: "Choose Best Dressed Male...",
+        female: "Choose Best Dressed Female..."
+      };
+
+      const displayEl = document.getElementById(`display-${role}`);
+      const clearEl = document.getElementById(`clear-${role}`);
+
+      if (displayEl) {
+        displayEl.textContent = placeholders[role];
+        displayEl.classList.add("text-slate-400");
+        displayEl.classList.remove("text-slate-900", "font-semibold");
+      }
+      if (clearEl) clearEl.classList.add("hidden");
+
+      validateBallotSelections();
+    }
+
+    function resetAllComboboxes() {
+      clearComboboxSelection(null, "voter");
+      clearComboboxSelection(null, "male");
+      clearComboboxSelection(null, "female");
+      const banner = document.getElementById("form-validation-banner");
+      const dupWarn = document.getElementById("voter-duplicate-warning");
+      if (banner) banner.classList.add("hidden");
+      if (dupWarn) dupWarn.classList.add("hidden");
+    }
+
+    function handleComboboxKeydown(event, role) {
+      const searchInput = document.getElementById(`search-${role}`);
+      const guests = getFilteredGuestsForRole(role, searchInput ? searchInput.value : "");
+      if (guests.length === 0) return;
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        highlightedIndex[role] = (highlightedIndex[role] + 1) % guests.length;
+        renderComboboxOptions(role);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        highlightedIndex[role] = (highlightedIndex[role] - 1 + guests.length) % guests.length;
+        renderComboboxOptions(role);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        const chosen = guests[highlightedIndex[role]];
+        if (chosen) {
+          const isSelfVote = (role === "male" || role === "female") && normalizeName(chosen.name) === normalizeName(selectedValues.voter);
+          if (!isSelfVote) {
+            selectComboboxOption(role, chosen.name);
+          }
+        }
+      } else if (event.key === "Escape") {
+        closeAllComboboxes();
+      }
+    }
+
+    // Close open combobox when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!openComboboxRole) return;
+      const box = document.getElementById(`combobox-${openComboboxRole}`);
+      if (box && !box.contains(e.target)) {
+        closeAllComboboxes();
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // Ballot Validation & Submission
+    // -------------------------------------------------------------------------
+
+    function validateBallotSelections() {
+      const dupWarn = document.getElementById("voter-duplicate-warning");
+      const banner = document.getElementById("form-validation-banner");
+      const bannerText = document.getElementById("form-validation-text");
+
+      const normVoter = normalizeName(selectedValues.voter);
+      const ballots = getBallots();
+      const alreadyVoted = normVoter && ballots.some(b => normalizeName(b.voterName) === normVoter);
+
+      if (dupWarn) dupWarn.classList.toggle("hidden", !alreadyVoted);
+
+      if (alreadyVoted) {
+        if (banner && bannerText) {
+          bannerText.textContent = `${selectedValues.voter} has already submitted a ballot. Only 1 ballot per guest is allowed.`;
+          banner.classList.remove("hidden");
+        }
+        return false;
+      }
+
+      if (normVoter && (normVoter === normalizeName(selectedValues.male) || normVoter === normalizeName(selectedValues.female))) {
+        if (banner && bannerText) {
+          bannerText.textContent = "Self-voting is not allowed. Please nominate another guest.";
+          banner.classList.remove("hidden");
+        }
+        return false;
+      }
+
+      if (banner) banner.classList.add("hidden");
+      return true;
+    }
+
+    function handleVoteSubmit(event) {
+      event.preventDefault();
+
+      const banner = document.getElementById("form-validation-banner");
+      const bannerText = document.getElementById("form-validation-text");
+
+      if (!selectedValues.voter || !selectedValues.male || !selectedValues.female) {
+        if (banner && bannerText) {
+          bannerText.textContent = "Please select your name, a Best Dressed Male nominee, and a Best Dressed Female nominee.";
+          banner.classList.remove("hidden");
+        }
+        return;
+      }
+
+      if (!validateBallotSelections()) return;
+
+      const ballots = getBallots();
+      if (ballots.length >= MAX_CAPACITY) {
+        if (banner && bannerText) {
+          bannerText.textContent = "Maximum event ballot capacity (250) has been reached.";
+          banner.classList.remove("hidden");
+        }
+        return;
+      }
+
+      const voterObj = findGuestByName(selectedValues.voter);
+      const maleObj = findGuestByName(selectedValues.male);
+      const femaleObj = findGuestByName(selectedValues.female);
+
+      const newBallot = {
+        id: `#PPFD-${String(ballots.length + 1).padStart(3, "0")}`,
+        voterName: selectedValues.voter,
+        voterUnit: voterObj ? voterObj.unit : "—",
+        voterTitle: voterObj ? voterObj.title : "",
+        maleNominee: selectedValues.male,
+        maleUnit: maleObj ? maleObj.unit : "—",
+        maleTitle: maleObj ? maleObj.title : "",
+        femaleNominee: selectedValues.female,
+        femaleUnit: femaleObj ? femaleObj.unit : "—",
+        femaleTitle: femaleObj ? femaleObj.title : "",
+        timestamp: new Date().toISOString()
+      };
+
+      ballots.push(newBallot);
+      saveBallots(ballots);
+      localStorage.setItem(STORAGE_KEYS.DEVICE_RECEIPT, JSON.stringify(newBallot));
+
+      showConfirmationReceipt(newBallot);
+      showToast("Ballot submitted! Thank you for voting.");
+    }
+
+    // -------------------------------------------------------------------------
+    // Tab Switching, Host PIN Gate, Toast & QR Code Utilities
+    // -------------------------------------------------------------------------
+
+    function switchTab(tabName) {
+      const views = ["vote", "qr", "host"];
+      views.forEach(v => {
+        const viewEl = document.getElementById(`view-${v}`);
+        const tabBtn = document.getElementById(`tab-${v}`);
+        if (viewEl) viewEl.classList.toggle("hidden", v !== tabName);
+        if (tabBtn) {
+          if (v === tabName) {
+            tabBtn.classList.add("bg-emerald-600", "text-white", "shadow-xs");
+            tabBtn.classList.remove("text-slate-600", "hover:text-slate-900", "hover:bg-emerald-50/70");
+          } else {
+            tabBtn.classList.remove("bg-emerald-600", "text-white", "shadow-xs");
+            tabBtn.classList.add("text-slate-600", "hover:text-slate-900", "hover:bg-emerald-50/70");
+          }
+        }
+      });
+
+      if (tabName === "host") {
+        renderHostDashboard();
+      }
+    }
+
+    function handlePinSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById("host-pin-input");
+      const errorEl = document.getElementById("pin-error");
+      if (!input) return;
+
+      if (input.value.trim() === HOST_PIN) {
+        sessionStorage.setItem(STORAGE_KEYS.HOST_UNLOCKED, "true");
+        input.value = "";
+        if (errorEl) errorEl.classList.add("hidden");
+        renderHostDashboard();
+        showToast("Host Dashboard unlocked!");
+      } else {
+        if (errorEl) errorEl.classList.remove("hidden");
+        showToast("Incorrect PIN. Try 1234.", true);
+      }
+    }
+
+    function lockHostDashboard() {
+      sessionStorage.removeItem(STORAGE_KEYS.HOST_UNLOCKED);
+      renderHostDashboard();
+      showToast("Host Dashboard locked.");
+    }
+
+    let toastTimeout = null;
+    function showToast(message, isError = false) {
+      let toastEl = document.getElementById("toast-notification");
+      if (!toastEl) {
+        toastEl = document.createElement("div");
+        toastEl.id = "toast-notification";
+        document.body.appendChild(toastEl);
+      }
+      toastEl.textContent = message;
+      toastEl.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-2xl shadow-lg text-xs font-semibold transition-all duration-300 flex items-center gap-2 max-w-xs ${
+        isError
+          ? "bg-rose-600 text-white border border-rose-500"
+          : "bg-slate-900 text-white border border-emerald-500/40"
+      }`;
+      toastEl.classList.remove("hidden", "opacity-0");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.add("opacity-0");
+        setTimeout(() => toastEl.classList.add("hidden"), 300);
+      }, 3200);
+    }
+
+    function initQRCode() {
+      const urlInput = document.getElementById("event-share-url-input");
+      const warningEl = document.getElementById("qr-sandbox-warning");
+      const currentUrl = window.location.href;
+
+      // Detect sandboxed/local preview URLs that won't load on external phones
+      const isPrivatePreview =
+        currentUrl.startsWith("about:") ||
+        currentUrl.startsWith("blob:") ||
+        currentUrl.startsWith("file:") ||
+        currentUrl.includes("localhost") ||
+        currentUrl.includes("127.0.0.1") ||
+        currentUrl.includes("googleusercontent.com") ||
+        currentUrl.includes("webcontainer");
+
+      if (warningEl) {
+        warningEl.classList.toggle("hidden", !isPrivatePreview);
+      }
+
+      if (urlInput) {
+        urlInput.value = currentUrl;
+      }
+
+      renderQRCodeGraphic(currentUrl);
+    }
+
+    function updateQRCodeFromInput() {
+      const urlInput = document.getElementById("event-share-url-input");
+      const warningEl = document.getElementById("qr-sandbox-warning");
+      if (!urlInput) return;
+
+      const val = urlInput.value.trim() || window.location.href;
+      const isPrivatePreview =
+        val.startsWith("about:") ||
+        val.startsWith("blob:") ||
+        val.startsWith("file:") ||
+        val.includes("localhost") ||
+        val.includes("127.0.0.1") ||
+        val.includes("googleusercontent.com") ||
+        val.includes("webcontainer");
+
+      if (warningEl) {
+        warningEl.classList.toggle("hidden", !isPrivatePreview);
+      }
+
+      renderQRCodeGraphic(val);
+    }
+
+    function renderQRCodeGraphic(targetUrl) {
+      const qrContainer = document.getElementById("qrcode-canvas");
+      if (qrContainer && typeof QRCode !== "undefined") {
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, {
+          text: targetUrl,
+          width: 192,
+          height: 192,
+          colorDark: "#064e3b",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+
+    function downloadQRCodePNG() {
+      const qrContainer = document.getElementById("qrcode-canvas");
+      if (!qrContainer) return;
+      const canvas = qrContainer.querySelector("canvas");
+      const img = qrContainer.querySelector("img");
+      const dataUrl = canvas ? canvas.toDataURL("image/png") : (img ? img.src : null);
+
+      if (!dataUrl) {
+        showToast("QR code image is not ready yet.", true);
+        return;
+      }
+
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "PPFD_2026_Best_Dressed_QR.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("QR code PNG downloaded!");
+    }
+
+    function copyEventLink() {
+      const urlInput = document.getElementById("event-share-url-input");
+      const targetUrl = (urlInput && urlInput.value.trim()) || window.location.href;
+      const tempInput = document.createElement("input");
+      tempInput.value = targetUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      showToast("Voting link copied to clipboard!");
+    }
+
+    function showConfirmationReceipt(ballot) {
+      const formContainer = document.getElementById("ballot-form-container");
+      const confirmedEl = document.getElementById("ballot-confirmed-container");
+      if (formContainer) formContainer.classList.add("hidden");
+      if (!confirmedEl) return;
+      confirmedEl.classList.remove("hidden");
+
+      const voterObj = findGuestByName(ballot.voterName);
+      const maleObj = findGuestByName(ballot.maleNominee);
+      const femaleObj = findGuestByName(ballot.femaleNominee);
+
+      const setTxt = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      setTxt("receipt-voter", ballot.voterName);
+      setTxt("receipt-voter-meta", `${ballot.voterUnit || (voterObj && voterObj.unit) || ""} • ${ballot.voterTitle || (voterObj && voterObj.title) || "Registered Guest"}`);
+      setTxt("receipt-id", ballot.id);
+      setTxt("receipt-male", ballot.maleNominee);
+      setTxt("receipt-male-unit", `UNIT: ${ballot.maleUnit || (maleObj && maleObj.unit) || "—"}`);
+      setTxt("receipt-female", ballot.femaleNominee);
+      setTxt("receipt-female-unit", `UNIT: ${ballot.femaleUnit || (femaleObj && femaleObj.unit) || "—"}`);
+
+      const dateObj = new Date(ballot.timestamp);
+      setTxt("receipt-time", `Recorded at ${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+    }
+
+    function checkDeviceVoteState() {
+      const formContainer = document.getElementById("ballot-form-container");
+      const confirmedEl = document.getElementById("ballot-confirmed-container");
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.DEVICE_RECEIPT);
+        if (raw) {
+          const savedReceipt = JSON.parse(raw);
+          const ballots = getBallots();
+          if (savedReceipt && ballots.some(b => b.id === savedReceipt.id)) {
+            showConfirmationReceipt(savedReceipt);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Device state check error:", e);
+      }
+
+      if (formContainer) formContainer.classList.remove("hidden");
+      if (confirmedEl) confirmedEl.classList.add("hidden");
+    }
+
+    function resetDeviceVoteForTesting() {
+      localStorage.removeItem(STORAGE_KEYS.DEVICE_RECEIPT);
+      resetAllComboboxes();
+      const formContainer = document.getElementById("ballot-form-container");
+      const confirmedEl = document.getElementById("ballot-confirmed-container");
+      if (confirmedEl) confirmedEl.classList.add("hidden");
+      if (formContainer) formContainer.classList.remove("hidden");
+      showToast("Device unlocked for next test guest!");
+    }
+
+    function updateHeaderCounters() {
+      const votedCount = getBallots().length;
+      const roster = getGuestRoster();
+      const rosterCount = roster.length;
+      const maleCount = roster.filter(g => g.gender === "M").length;
+      const femaleCount = roster.filter(g => g.gender === "F").length;
+
+      const topVoted = document.getElementById("top-voted-count");
+      const topRoster = document.getElementById("top-roster-count");
+      const ballotBadge = document.getElementById("ballot-roster-badge");
+      if (topVoted) topVoted.textContent = votedCount;
+      if (topRoster) topRoster.textContent = `${rosterCount} Guests`;
+      if (ballotBadge) ballotBadge.textContent = `${rosterCount} GUESTS`;
+
+      const maleLabel = document.getElementById("male-nominee-count-label");
+      const femaleLabel = document.getElementById("female-nominee-count-label");
+      if (maleLabel) maleLabel.textContent = `${maleCount} Male Guests`;
+      if (femaleLabel) femaleLabel.textContent = `${femaleCount} Female Guests`;
+    }
+
+    function tallyCategory(ballots, fieldKey, unitKey) {
+      const map = new Map();
+
+      ballots.forEach(ballot => {
+        const displayName = ballot[fieldKey];
+        const norm = normalizeName(displayName);
+        if (!norm) return;
+
+        if (!map.has(norm)) {
+          const guestInfo = findGuestByName(displayName);
+          map.set(norm, {
+            displayName: displayName,
+            unit: ballot[unitKey] || (guestInfo ? guestInfo.unit : ""),
+            title: guestInfo ? guestInfo.title : "",
+            count: 0
+          });
+        }
+        map.get(norm).count += 1;
+      });
+
+      return Array.from(map.values()).sort((a, b) => b.count - a.count);
+    }
+
+    function renderLeaderboardList(containerId, contenders, totalVotes, accentClass) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (contenders.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 px-4 rounded-2xl bg-slate-50/70 border border-dashed border-slate-200 text-slate-400 text-xs">
+            No votes cast in this category yet.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = contenders.map((item, idx) => {
+        const pct = totalVotes > 0 ? Math.round((item.count / totalVotes) * 100) : 0;
+        const isLeader = idx === 0;
+        const badge = isLeader
+          ? `<span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold uppercase shrink-0">1st</span>`
+          : `<span class="text-xs font-mono text-slate-400 w-6 text-center shrink-0">#${idx + 1}</span>`;
+        const unitTag = item.unit
+          ? `<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-mono font-semibold shrink-0">${escapeHTML(item.unit)}</span>`
+          : "";
+
+        return `
+          <div class="p-3 rounded-2xl ${isLeader ? 'bg-amber-50/50 border border-amber-200/80 shadow-2xs' : 'bg-slate-50/70 border border-slate-100'}">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-2 min-w-0">
+                ${badge}
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-semibold text-sm text-slate-900 truncate">${escapeHTML(item.displayName)}</span>
+                    ${unitTag}
+                  </div>
+                  ${item.title ? `<p class="text-[11px] text-slate-400 truncate">${escapeHTML(item.title)}</p>` : ""}
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-xs font-bold text-slate-900">${item.count}</span>
+                <span class="text-[11px] text-slate-500">(${pct}%)</span>
+              </div>
+            </div>
+            <div class="w-full h-2 bg-white rounded-full overflow-hidden border border-slate-200/60">
+              <div class="h-full ${isLeader ? 'bg-amber-500' : accentClass} rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderHostDashboard() {
+      const isUnlocked = sessionStorage.getItem(STORAGE_KEYS.HOST_UNLOCKED) === "true";
+      const gateEl = document.getElementById("host-pin-gate");
+      const dashEl = document.getElementById("host-dashboard-content");
+      if (!gateEl || !dashEl) return;
+
+      if (!isUnlocked) {
+        gateEl.classList.remove("hidden");
+        dashEl.classList.add("hidden");
+        return;
+      }
+
+      gateEl.classList.add("hidden");
+      dashEl.classList.remove("hidden");
+
+      const ballots = getBallots();
+      const roster = getGuestRoster();
+      const total = ballots.length;
+      const rosterSize = roster.length || 1;
+      const turnoutPct = Math.min(100, Math.round((total / rosterSize) * 100));
+
+      document.getElementById("host-total-votes").textContent = total;
+      document.getElementById("host-roster-total").textContent = roster.length;
+      document.getElementById("host-turnout-pct").textContent = `${turnoutPct}% Turnout`;
+      document.getElementById("host-progress-bar").style.width = `${turnoutPct}%`;
+
+      const maleContenders = tallyCategory(ballots, "maleNominee", "maleUnit");
+      const femaleContenders = tallyCategory(ballots, "femaleNominee", "femaleUnit");
+
+      document.getElementById("male-unique-count").textContent = `${maleContenders.length} nominees`;
+      document.getElementById("female-unique-count").textContent = `${femaleContenders.length} nominees`;
+
+      renderLeaderboardList("male-leaderboard-list", maleContenders, total, "bg-sky-500");
+      renderLeaderboardList("female-leaderboard-list", femaleContenders, total, "bg-rose-500");
+
+      renderHostRosterManager();
+
+      const tbody = document.getElementById("audit-log-body");
+      if (!tbody) return;
+
+      if (ballots.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-6 text-center text-slate-400">No ballots submitted yet.</td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = [...ballots].reverse().map(b => {
+          const timeStr = new Date(b.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const vUnit = b.voterUnit ? ` <span class="text-[10px] font-mono text-slate-400">(${escapeHTML(b.voterUnit)})</span>` : "";
+          const mUnit = b.maleUnit ? ` <span class="text-[10px] font-mono text-sky-600/70">(${escapeHTML(b.maleUnit)})</span>` : "";
+          const fUnit = b.femaleUnit ? ` <span class="text-[10px] font-mono text-rose-500/70">(${escapeHTML(b.femaleUnit)})</span>` : "";
+          return `
+            <tr class="hover:bg-emerald-50/40 transition">
+              <td class="py-2.5 px-3 font-mono font-semibold text-emerald-700">${escapeHTML(b.id)}</td>
+              <td class="py-2.5 px-3 font-medium text-slate-900">${escapeHTML(b.voterName)}${vUnit}</td>
+              <td class="py-2.5 px-3 text-sky-700 font-medium">${escapeHTML(b.maleNominee)}${mUnit}</td>
+              <td class="py-2.5 px-3 text-rose-600 font-medium">${escapeHTML(b.femaleNominee)}${fUnit}</td>
+              <td class="py-2.5 px-3 text-right text-slate-400">${timeStr}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+    }
+
+    function renderHostRosterManager() {
+      const roster = getGuestRoster();
+      const filterInput = document.getElementById("host-roster-search");
+      const unitFilter = document.getElementById("host-roster-unit-filter")?.value || "ALL";
+      const genderFilter = document.getElementById("host-roster-gender-filter")?.value || "ALL";
+      const query = filterInput ? normalizeName(filterInput.value) : "";
+
+      const badge = document.getElementById("roster-manager-badge");
+      if (badge) badge.textContent = `${roster.length} Guests`;
+
+      const filtered = roster.filter(guest => {
+        if (unitFilter !== "ALL" && guest.unit !== unitFilter) return false;
+        if (genderFilter !== "ALL" && guest.gender !== genderFilter) return false;
+        if (!query) return true;
+        return (
+          normalizeName(guest.name).includes(query) ||
+          normalizeName(guest.unit).includes(query) ||
+          normalizeName(guest.title).includes(query)
+        );
+      });
+
+      const listContainer = document.getElementById("host-roster-list");
+      if (!listContainer) return;
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<span class="text-xs text-slate-400 p-2">No matching guests in directory.</span>`;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(guest => {
+        const gBadge = guest.gender === "M"
+          ? `<span class="text-[10px] font-bold text-sky-700 bg-sky-50 px-1.5 rounded">M</span>`
+          : `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 rounded">F</span>`;
+        return `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-xs text-slate-700 shadow-2xs" title="${escapeHTML(guest.title)}">
+            <span class="text-[10px] font-mono font-bold text-emerald-700">${escapeHTML(guest.unit)}</span>
+            ${gBadge}
+            <span>${escapeHTML(guest.name)}</span>
+            <button
+              type="button"
+              onclick="removeGuestFromRoster(this)"
+              data-guest="${escapeHTML(guest.name)}"
+              class="text-slate-400 hover:text-rose-600 font-bold leading-none ml-0.5"
+              title="Remove from directory"
+            >×</button>
+          </span>
+        `;
+      }).join("");
+    }
+
+    function handleAddWalkInGuest(event) {
+      event.preventDefault();
+      const nameInput = document.getElementById("new-guest-name");
+      const titleInput = document.getElementById("new-guest-title");
+      const unitSelect = document.getElementById("new-guest-unit");
+      const genderSelect = document.getElementById("new-guest-gender");
+
+      const cleanName = nameInput.value.trim().replace(/\s+/g, " ");
+      const cleanTitle = titleInput.value.trim().replace(/\s+/g, " ") || "Event Guest";
+      const unitVal = unitSelect.value;
+      const genderVal = genderSelect.value;
+
+      if (!cleanName) return;
+
+      const roster = getGuestRoster();
+      if (roster.some(g => normalizeName(g.name) === normalizeName(cleanName))) {
+        showToast(`"${cleanName}" is already in the guest directory.`, true);
+        return;
+      }
+
+      roster.push({
+        name: cleanName,
+        title: cleanTitle,
+        unit: unitVal,
+        gender: genderVal
+      });
+      saveGuestRoster(roster);
+      nameInput.value = "";
+      titleInput.value = "";
+      renderHostRosterManager();
+      showToast(`Added "${cleanName}" (${unitVal} • ${genderVal}) to dropdowns.`);
+    }
+
+    function removeGuestFromRoster(btn) {
+      const targetName = btn.getAttribute("data-guest");
+      const roster = getGuestRoster();
+      if (roster.length <= 3) {
+        showToast("At least 3 guests must remain in the directory.", true);
+        return;
+      }
+      const updated = roster.filter(g => g.name !== targetName);
+      saveGuestRoster(updated);
+      renderHostRosterManager();
+      showToast(`Removed "${targetName}" from guest directory.`);
+    }
+
+    function resetGuestRosterToDefault() {
+      saveGuestRoster(INITIAL_GUEST_ROSTER);
+      renderHostDashboard();
+      showToast("Restored original 224-guest directory from party list test_2.xlsx.");
+    }
+
+    function seedSampleVotes() {
+      const samplePairs = [
+        ["Laarni T. Joson", "Aaron Pasquinel D. Cruz", "Anne Michelle C. Mendoza"],
+        ["Aaron Pasquinel D. Cruz", "Akmal Nartayev", "Cecilia C. Peralta"],
+        ["Anthony Jay B. Castelo", "Ben Arvin F. dela Cruz", "Amiko Sudo"],
+        ["Abira Prashanth", "Jesper Pedersen", "Aiza Jane G. Vila"],
+        ["Amy Grace Y. Ramos", "Guoliang Wu", "Cerissa Camelle C. Obillos"],
+        ["Deewas Khadka", "Aaron Pasquinel D. Cruz", "Maria Joao Kaizeler"],
+        ["Iris Ann T. Miranda", "Jesper Pedersen", "Amiko Sudo"],
+        ["Jasper E. Florendo", "Guoliang Wu", "Aiza Jane G. Vila"],
+        ["Keiko Koiso", "Aaron Pasquinel D. Cruz", "Galiya Ismakova"],
+        ["Xu Zhao", "Jesper Pedersen", "Maria Joao Kaizeler"]
+      ];
+
+      const ballots = getBallots();
+      let added = 0;
+
+      samplePairs.forEach(([voter, male, female]) => {
+        if (ballots.length >= MAX_CAPACITY) return;
+        if (!ballots.some(b => normalizeName(b.voterName) === normalizeName(voter))) {
+          const vObj = findGuestByName(voter);
+          const mObj = findGuestByName(male);
+          const fObj = findGuestByName(female);
+          ballots.push({
+            id: `#PPFD-${String(ballots.length + 1).padStart(3, "0")}`,
+            voterName: voter,
+            voterUnit: vObj ? vObj.unit : "—",
+            voterTitle: vObj ? vObj.title : "",
+            maleNominee: male,
+            maleUnit: mObj ? mObj.unit : "—",
+            maleTitle: mObj ? mObj.title : "",
+            femaleNominee: female,
+            femaleUnit: fObj ? fObj.unit : "—",
+            femaleTitle: fObj ? fObj.title : "",
+            timestamp: new Date().toISOString()
+          });
+          added++;
+        }
+      });
+
+      saveBallots(ballots);
+      renderHostDashboard();
+      if (added > 0) {
+        showToast(`Added ${added} sample ballots from official Unit directories!`);
+      } else {
+        showToast("Sample guests have already voted.", true);
+      }
+    }
+
+    function confirmClearAllVotes() {
+      const btn = document.getElementById("btn-clear-votes");
+      if (!btn) return;
+
+      if (!isClearArmed) {
+        isClearArmed = true;
+        btn.textContent = "Click Again to Confirm Reset";
+        btn.classList.remove("bg-rose-50", "text-rose-700");
+        btn.classList.add("bg-rose-600", "text-white");
+        clearConfirmTimeout = setTimeout(() => {
+          isClearArmed = false;
+          btn.textContent = "Reset All Ballots";
+          btn.classList.add("bg-rose-50", "text-rose-700");
+          btn.classList.remove("bg-rose-600", "text-white");
+        }, 4000);
+        return;
+      }
+
+      clearTimeout(clearConfirmTimeout);
+      isClearArmed = false;
+      btn.textContent = "Reset All Ballots";
+      btn.classList.add("bg-rose-50", "text-rose-700");
+      btn.classList.remove("bg-rose-600", "text-white");
+
+      saveBallots([]);
+      localStorage.removeItem(STORAGE_KEYS.DEVICE_RECEIPT);
+      renderHostDashboard();
+      checkDeviceVoteState();
+      showToast("All ballots cleared.");
+    }
+
+    function exportCSV() {
+      const ballots = getBallots();
+      if (ballots.length === 0) {
+        showToast("No votes available to export yet.", true);
+        return;
+      }
+
+      const headers = [
+        "Receipt ID",
+        "Voter Name",
+        "Voter Unit",
+        "Best Dressed Male",
+        "Male Nominee Unit",
+        "Best Dressed Female",
+        "Female Nominee Unit",
+        "Timestamp"
+      ];
+      const rows = ballots.map(b => [
+        `"${b.id}"`,
+        `"${b.voterName.replace(/"/g, '""')}"`,
+        `"${(b.voterUnit || "").replace(/"/g, '""')}"`,
+        `"${b.maleNominee.replace(/"/g, '""')}"`,
+        `"${(b.maleUnit || "").replace(/"/g, '""')}"`,
+        `"${b.femaleNominee.replace(/"/g, '""')}"`,
+        `"${(b.femaleUnit || "").replace(/"/g, '""')}"`,
+        `"${b.timestamp}"`
+      ].join(","));
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "PPFD_Year_End_Party_2026_Votes.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("CSV results downloaded!");
+    }
+
+    // -------------------------------------------------------------------------
+    // Initialize App on Load
+    // -------------------------------------------------------------------------
+    window.addEventListener("DOMContentLoaded", () => {
+      if (!localStorage.getItem(STORAGE_KEYS.ROSTER)) {
+        saveGuestRoster(INITIAL_GUEST_ROSTER);
+      }
+      updateHeaderCounters();
+      checkDeviceVoteState();
+      initQRCode();
+    });
+  </script>
+</body>
+</html>
